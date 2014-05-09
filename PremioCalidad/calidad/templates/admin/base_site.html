@@ -1,0 +1,146 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block title %}{{ title }} | {% trans 'Django site admin' %}{% endblock %}
+
+{% block extrahead %}
+
+<script src="/static/admin/js/jquery-1.11.0.min.js"></script>
+<script src="/static/admin/js/Puntuacion.js"></script>
+<script src="/static/admin/js/ConsensoCalidad.js"></script>
+<script src="/static/admin/js/VisitaCalidad.js"></script>
+<script src="/static/admin/js/VisitaMejoresPracticas.js"></script>
+<script src="/static/admin/js/ConsensoMejoresPracticas.js"></script>
+<script src="/static/admin/js/PCContextMenu.js"></script>
+<script src="/static/admin/js/jquery.mask.min.js"></script>
+<script type="text/javascript" src="/static/tiny_mce/tiny_mce.js"></script>
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+
+		//console.log('haciendo algo');
+		h = new HojaPuntuacion();
+		h2 = new HojaPuntuacionMejoresPracticas();
+		hoja_consenso = new HojaConsensoCalidad();
+		hoja_consenso_mp = new HojaConsensoMejoresPracticas();
+		hoja_visita_calidad = new HojaVisitaCalidad();
+		hoja_visita_mejorespracticas = new HojaVisitaMejoresPracticas();
+		h.config();
+		h2.config();
+		hoja_consenso.config();
+		hoja_consenso_mp.config();
+		hoja_visita_calidad.config();
+		hoja_visita_mejorespracticas.config();
+
+		{% for group in user.groups.all %}
+    		{% if group.name == 'evaluacion_calidad' or group.name == 'evaluacion_mp' or group.name == 'evaluacion_calidad_end' or group.name == 'evaluacion_mp_end'%}
+        		menus = new MenusContextuales();
+				menus.config();
+    		{% endif %}
+		{% endfor %}
+
+		//Este handler es para poder bloquear todos los tinymce elements
+		$(window).load(function(){
+
+      		{% for group in user.groups.all %}
+      			//Roles de Premio de Calidad
+    			{% if group.name == 'individual_calidad_end'%}
+
+    				lista_clases = $("body").attr('class').split(/\s+/);
+      				$.each(lista_clases,function(index,clase){
+						if(clase.indexOf("calidad-criteriosevaluacion")!=-1  || clase.indexOf("calidad-evaluacionindividualcalidad")!=-1){
+
+							$.each(tinymce.get(),function(index,tiny){
+								tiny.getBody().setAttribute('contenteditable',false);
+							
+							});
+							//console.log('entro aca');
+							//tinymce.activeEditor.getBody().setAttribute('contenteditable', false)
+						}
+					});
+
+    			{% endif %}
+
+    			{% if group.name == 'consenso_calidad_end'%}
+
+    				lista_clases = $("body").attr('class').split(/\s+/);
+
+      				$.each(lista_clases,function(index,clase){
+						if(clase.indexOf("consenso")!=-1){
+							tinymce.activeEditor.getBody().setAttribute('contenteditable', false)
+						}
+					});
+
+    			{% endif %}
+
+    			{% if group.name == 'visita_calidad_end'%}
+
+    				lista_clases = $("body").attr('class').split(/\s+/);
+
+      				$.each(lista_clases,function(index,clase){
+						if(clase.indexOf("visita")!=-1 || clase.indexOf("calidad-ambientecompetitivo")!=-1 ){
+							tinymce.activeEditor.getBody().setAttribute('contenteditable', false)
+						}
+					});
+
+    			{% endif %}
+
+    			//Roles de Reconocimiento a Mejores Practicas
+    			 {% if group.name == 'individual_mp_end'%}
+
+    				lista_clases = $("body").attr('class').split(/\s+/);
+
+      				$.each(lista_clases,function(index,clase){
+						if(clase.indexOf("calidad-criteriosevaluacionmejorespracticas")!=-1 || clase.indexOf("calidad-evaluacionindividualmejorespracticas")!=-1 ){
+							
+							$.each(tinymce.get(),function(index,tiny){
+								tiny.getBody().setAttribute('contenteditable',false);
+							
+							});
+
+						}
+					});
+
+    			{% endif %}
+    			 {% if group.name == 'consenso_mp_end'%}
+
+    				lista_clases = $("body").attr('class').split(/\s+/);
+
+      				$.each(lista_clases,function(index,clase){
+						if(clase.indexOf("consenso")!=-1 ){
+							tinymce.activeEditor.getBody().setAttribute('contenteditable', false)
+						}
+					});
+
+    			{% endif %}
+    			 {% if group.name == 'visita_mp_end'%}
+
+    				lista_clases = $("body").attr('class').split(/\s+/);
+
+      				$.each(lista_clases,function(index,clase){
+						if(clase.indexOf("visita")!=-1 ){
+							tinymce.activeEditor.getBody().setAttribute('contenteditable', false)
+						}
+					});
+
+    			{% endif %}
+
+			{% endfor %}
+   		});
+});
+
+</script>
+
+{% endblock %}
+
+{% block branding %}
+<noscript>
+<meta http-equiv="refresh" content="0; URL=http://www.google.com" />
+</noscript>
+
+<h1 id="site-name">{% trans 'Premio Salvadoreño a la Calidad y Reconocimiento a Mejores Prácticas' %}</h1>
+
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
